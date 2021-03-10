@@ -53,20 +53,24 @@ class MainPageState extends State<MainPage> {
     switch (index) {
       case 0:
         return Container(
+          alignment: Alignment.center,
           child: Text("${index}"),
         );
       case 1:
         return Container(
+          alignment: Alignment.center,
           child: Text("${index}"),
         );
         break;
       case 2:
         return Container(
+          alignment: Alignment.center,
           child: Text("${index}"),
         );
         break;
       default:
         return Container(
+          alignment: Alignment.center,
           child: Text("${index}"),
         );
         break;
