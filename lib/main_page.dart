@@ -10,15 +10,25 @@ class MainPage extends StatefulWidget {
 
 class MainPageState extends State<MainPage> {
   int currentindex = 0;
+  PageController controller = PageController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: TopBar.getAppBar(context, "Family", leading: Container()),
       body: SafeArea(
-        child: PageView.builder(itemBuilder: (context,index){
-          return Container();
-        }),
+        child: PageView.builder(
+          controller: controller,
+          itemCount: 3,
+          itemBuilder: (context, index) {
+            return _page(context, index);
+          },
+          onPageChanged: (index) {
+            setState(() {
+              currentindex = index;
+            });
+          },
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: AppColor.primeColor,
@@ -28,6 +38,8 @@ class MainPageState extends State<MainPage> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: "我"),
         ],
         onTap: (index) {
+          controller.animateToPage(index, duration: Duration(milliseconds: 200), curve: SawTooth(index));
+          // controller.jumpToPage(index);
           setState(() {
             currentindex = index;
           });
@@ -35,5 +47,29 @@ class MainPageState extends State<MainPage> {
         currentIndex: currentindex,
       ),
     );
+  }
+
+  Widget _page(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        return Container(
+          child: Text("${index}"),
+        );
+      case 1:
+        return Container(
+          child: Text("${index}"),
+        );
+        break;
+      case 2:
+        return Container(
+          child: Text("${index}"),
+        );
+        break;
+      default:
+        return Container(
+          child: Text("${index}"),
+        );
+        break;
+    }
   }
 }
