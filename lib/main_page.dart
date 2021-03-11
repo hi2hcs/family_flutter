@@ -1,4 +1,7 @@
 import 'package:family/color/app_color.dart';
+import 'package:family/page/find_page.dart';
+import 'package:family/page/me_page.dart';
+import 'package:family/page/message_page.dart';
 import 'package:family/widget/app_bar_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,12 +14,16 @@ class MainPage extends StatefulWidget {
 class MainPageState extends State<MainPage> {
   int currentindex = 0;
   int num = 0;
+  String title = "信息";
   PageController controller = PageController();
+  MessagePage messagePage;
+  Widget findePage;
+  Widget mePage;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: TopBar.getAppBar(context, "Family", leading: Container()),
+      appBar: TopBar.getAppBar(context, title, leading: Container()),
       body: SafeArea(
         child: PageView.builder(
           controller: controller,
@@ -26,8 +33,10 @@ class MainPageState extends State<MainPage> {
           },
           onPageChanged: (index) {
             setState(() {
+              print("......onPageChanged.......$index");
               currentindex = index;
               num = index;
+              setTitle(index);
             });
           },
         ),
@@ -48,6 +57,8 @@ class MainPageState extends State<MainPage> {
           setState(() {
             currentindex = index;
             num = index;
+            setTitle(index);
+            print("......setTitle.......$index");
           });
         },
         currentIndex: currentindex,
@@ -55,36 +66,56 @@ class MainPageState extends State<MainPage> {
     );
   }
 
+  void setTitle(int index) {
+    if (index == 0) {
+      title = "信息";
+    } else if (index == 1) {
+      title = "发现";
+    } else {
+      title = "我";
+    }
+  }
+
   Widget _page(BuildContext context, int index) {
     switch (index) {
       case 0:
-        return Container(
-          color: Colors.red,
-          alignment: Alignment.center,
-          child: Text("${index}"),
-        );
+        print(".............0");
+        if (messagePage == null) {
+          messagePage = MessagePage();
+        }
+        if(currentindex==0){
+          messagePage.currentState?.refresh();
+        }
+        return messagePage;
+        break;
       case 1:
-        return Container(
-          color: Colors.green,
-          alignment: Alignment.center,
-          child: Text("${index}"),
-        );
+        print(".............1");
+        if (findePage == null) {
+          findePage = FindPage();
+        }
+        return findePage;
         break;
       case 2:
-        return Container(
-          color: Colors.blue,
-          alignment: Alignment.center,
-          child: Text("${index}"),
-        );
+        print(".............2");
+        if (mePage == null) {
+          mePage = MePage();
+        }
+        return mePage;
         break;
-      default:
-        return Container(
-          color: Colors.red,
-          alignment: Alignment.center,
-          child: Text("${index}"),
-        );
-        break;
+      // default:
+      //   if (messagePage == null) {
+      //     messagePage = MessagePage();
+      //   }
+      //   return messagePage;
     }
+  }
+
+  @override
+  void dispose() {
+    messagePage = null;
+    findePage = null;
+    mePage = null;
+    super.dispose();
   }
 }
 
