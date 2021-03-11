@@ -10,6 +10,7 @@ class MainPage extends StatefulWidget {
 
 class MainPageState extends State<MainPage> {
   int currentindex = 0;
+  int num = 0;
   PageController controller = PageController();
 
   @override
@@ -26,6 +27,7 @@ class MainPageState extends State<MainPage> {
           onPageChanged: (index) {
             setState(() {
               currentindex = index;
+              num = index;
             });
           },
         ),
@@ -33,15 +35,19 @@ class MainPageState extends State<MainPage> {
       bottomNavigationBar: BottomNavigationBar(
         selectedItemColor: AppColor.primeColor,
         items: [
-          BottomNavigationBarItem(icon: Icon(Icons.message), label: "信息"),
-          BottomNavigationBarItem(icon: Icon(Icons.near_me_outlined), label: "发现"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "我"),
+          BottomNavigationBarItem(
+              icon: IconWithRedPoint(iconData: Icons.messenger_outline, num: num),
+              label: "信息",
+              activeIcon: IconWithRedPoint(iconData: Icons.messenger, num: num)),
+          BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: "发现", activeIcon: Icon(Icons.explore)),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "我", activeIcon: Icon(Icons.person)),
         ],
         onTap: (index) {
-          controller.animateToPage(index, duration: Duration(milliseconds: 200), curve: SawTooth(index));
-          // controller.jumpToPage(index);
+          // controller.animateToPage(index, duration: Duration(milliseconds: 200), curve: ElasticInCurve(0.2));
+          controller.jumpToPage(index);
           setState(() {
             currentindex = index;
+            num = index;
           });
         },
         currentIndex: currentindex,
@@ -53,27 +59,63 @@ class MainPageState extends State<MainPage> {
     switch (index) {
       case 0:
         return Container(
+          color: Colors.red,
           alignment: Alignment.center,
           child: Text("${index}"),
         );
       case 1:
         return Container(
+          color: Colors.green,
           alignment: Alignment.center,
           child: Text("${index}"),
         );
         break;
       case 2:
         return Container(
+          color: Colors.blue,
           alignment: Alignment.center,
           child: Text("${index}"),
         );
         break;
       default:
         return Container(
+          color: Colors.red,
           alignment: Alignment.center,
           child: Text("${index}"),
         );
         break;
     }
+  }
+}
+
+class IconWithRedPoint extends StatelessWidget {
+  const IconWithRedPoint({Key key, @required this.iconData, @required this.num}) : super(key: key);
+
+  final int num;
+  final IconData iconData;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        Icon(iconData),
+        Visibility(
+            visible: ((num ?? 0) != 0),
+            child: Container(
+              margin: EdgeInsets.only(left: 10),
+              alignment: Alignment.center,
+              width: 14,
+              height: 14,
+              child: Text(
+                "${num ?? 0}",
+                style: TextStyle(
+                  fontSize: 9,
+                  color: Colors.white,
+                ),
+              ),
+              decoration: BoxDecoration(borderRadius: BorderRadius.circular(7), color: Colors.red),
+            ))
+      ],
+    );
   }
 }
