@@ -1,8 +1,13 @@
 import 'package:family/color/app_color.dart';
+import 'package:family/page/friends_dynamic_page.dart';
+import 'package:family/widget/app_web_view.dart';
+import 'package:family/widget/app_web_view_bloc.dart';
 import 'package:family/widget/horizontalcontent_widget.dart';
 import 'package:family/widget/widgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FindPage extends StatefulWidget {
   @override
@@ -14,6 +19,7 @@ class _FindPageState extends State<FindPage> {
   void initState() {
     super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -25,7 +31,13 @@ class _FindPageState extends State<FindPage> {
               color: AppColor.primeColor,
             ),
             label: "朋友圈",
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => FriendsDynamicPage(),
+                ),
+              );
+            },
           ),
           Widgets.devider(),
           HorizontalContentWidget(
@@ -34,7 +46,14 @@ class _FindPageState extends State<FindPage> {
               color: AppColor.linkBlue,
             ),
             label: "扫一扫",
-            onTap: () {},
+            onTap: () async {
+              const url = 'http://flutter.dev';
+              if (await canLaunch(url)) {
+                await launch(url);
+              } else {
+                Fluttertoast.showToast(msg: "无法打开浏览器");
+              }
+            },
           ),
           Widgets.lineNoComplete(EdgeInsets.only(left: 50)),
           HorizontalContentWidget(
@@ -61,7 +80,14 @@ class _FindPageState extends State<FindPage> {
               color: Colors.red,
             ),
             label: "搜一搜",
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => (AppWebView("https://www.baidu.com",
+                      LoadUrlType.URL)),
+                ),
+              );
+            },
           ),
           Widgets.devider(),
           HorizontalContentWidget(
@@ -70,7 +96,14 @@ class _FindPageState extends State<FindPage> {
               color: AppColor.linkBlue,
             ),
             label: "直播",
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+
+                  builder: (context) => (AppWebView("https://www.bilibili.com/", LoadUrlType.URL)),
+                ),
+              );
+            },
           ),
           Widgets.devider(),
           HorizontalContentWidget(

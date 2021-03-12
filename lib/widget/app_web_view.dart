@@ -3,10 +3,10 @@ import 'dart:convert' as convert;
 
 import 'package:family/color/app_color.dart';
 import 'package:family/model/web_view_toast/web_view_toast.dart';
-import 'package:family/page/show_picture_bottom_sheet.dart';
-import 'package:family/page/app_web_view_bloc.dart';
 import 'package:family/util/util.dart';
+import 'package:family/widget/app_web_view_bloc.dart';
 import 'package:family/widget/qrcode_reader_view.dart';
+import 'package:family/widget/show_picture_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
