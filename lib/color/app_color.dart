@@ -12,11 +12,11 @@ abstract class AppColor {
   static const Color linkBlue = Color(0xFF4E9FF0);
 }
 
-abstract class TeaSize {
+abstract class AppSize {
   static const double titleTextSize = 17;
 }
 
-abstract class TeaStyle {
+abstract class AppStyle {
   static const TextStyle titleTextStyle =
   TextStyle(fontSize: 17, color: AppColor.textBlack);
 }

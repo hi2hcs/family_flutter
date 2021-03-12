@@ -11,7 +11,8 @@ class NetRequestCallback<@required T> {
   bool isSuccessful(Response response) {
     return response?.statusCode == 200 &&
         response.data != null &&
-        (successCode.contains(response.data['code'])) &&
+        ///暂时注释掉
+        // (successCode.contains(response.data['code'])) &&
         additionalCheck(response);
   }
 

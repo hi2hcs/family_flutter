@@ -1,9 +1,22 @@
+import 'dart:convert';
+
+import 'package:family/color/app_color.dart';
+import 'package:family/contants.dart';
+import 'package:family/network/client_impl/common_network/common_service.dart';
+import 'package:family/network/composer/net_composer.dart';
+import 'package:family/network/composer/net_request_callback.dart';
+import 'package:family/page/app_web_view.dart';
+import 'package:family/page/app_web_view_bloc.dart';
+import 'package:family/util/util.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+import 'package:family/model/entry.dart';
 
 class MessagePage extends StatefulWidget {
   MessagePageState currentState;
+
   @override
   State<StatefulWidget> createState() {
     currentState = MessagePageState();
@@ -14,56 +27,45 @@ class MessagePage extends StatefulWidget {
 class MessagePageState extends State<MessagePage> with AutomaticKeepAliveClientMixin {
   RefreshController _refreshController = RefreshController();
   bool isFinish = false;
-  String title = "xxxxxx";
-
-  @override
-  void didUpdateWidget(covariant MessagePage oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    print("MessagePage didUpdateWidget...........");
-  }
+  List<Content> currentList = [];
 
   void refresh() {
-    print("refresh...........${isFinish}");
     if (isFinish) {
-      setState(() {
-        title = "YYYYYY";
-      });
+      print("refresh...");
+      NetComposer.compose(
+        CommonService.news(),
+        NetRequestCallback<List<Entry>>(
+            parse: (data) {
+              return Entry.listFromJson(data);
+            },
+            onSuccess: (data) {
+              var list = data.map((e) => Content.fromJson(json.decode(e.content)))?.toList();
+              if (Util.isNotEmptyList(list)) {
+                setState(() {
+                  _refreshController.refreshCompleted();
+                  currentList = list;
+                });
+              }
+            },
+            onComplete: (isSuccess) {}),
+      );
     }
-  }
-
-  @override
-  void reassemble() {
-    super.reassemble();
-    print("MessagePage reassemble...........");
-  }
-
-  @override
-  void updateKeepAlive() {
-    super.updateKeepAlive();
-    print("MessagePage updateKeepAlive...........");
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    print("MessagePage didChangeDependencies...........");
   }
 
   @override
   void initState() {
     super.initState();
     isFinish = true;
-    print("MessagePage initState...........");
+    refresh();
   }
 
   @override
   Widget build(BuildContext context) {
-    print("MessagePage build...........");
     return Column(
       children: [
         Expanded(
           child: SmartRefresher(
-            enablePullUp: true,
+            enablePullUp: false,
             enablePullDown: true,
             footer: CustomFooter(
               builder: (BuildContext context, LoadStatus mode) {
@@ -87,24 +89,114 @@ class MessagePageState extends State<MessagePage> with AutomaticKeepAliveClientM
                 );
               },
             ),
+            onRefresh: () {
+              refresh();
+            },
             onLoading: () {},
             controller: _refreshController,
             child: ListView.builder(
               shrinkWrap: true,
-              itemExtent: 100,
-              itemCount: 10,
+              itemExtent: 81,
+              itemCount: (currentList?.length ?? 0),
               itemBuilder: (context, index) {
-                return Container(
-                  child: Text(title ?? "null"),
-                  color: Colors.red,
-                  height: 100,
-                  margin: EdgeInsets.only(bottom: 1),
-                );
+                return buildItems(context, index);
               },
             ),
           ),
         )
       ],
+    );
+  }
+
+  Widget buildItems(BuildContext context, int index) {
+    String time = currentList[index]?.time;
+    // String httpurl = currentList[index]?.display_url ?? "";
+    String httpurl = currentList[index]?.url ?? "";
+    UseInfo info = currentList[index]?.user_info;
+    String name = info?.name ?? "xxx_$index";
+    String desc = info?.description ?? "desc_$index";
+    String url = info?.avatar_url ??
+        "https://sf1-ttcdn-tos.pstatp.com/img/pgc-image/6567094cd4c249a487b66a43cfcd414d~300x300.image";
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: Contants.MARGIN_LEFT),
+            height: 80,
+            child: Row(
+              children: [
+                ClipRRect(
+                  child: Container(
+                    child: Image.network(
+                      url,
+                      cacheHeight: 120,
+                      cacheWidth: 120,
+                    ),
+                    width: 60,
+                    height: 60,
+                  ),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                Container(
+                  constraints: BoxConstraints(maxWidth: 230),
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        name,
+                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Text(
+                        desc,
+                        style: TextStyle(fontSize: 14, color: AppColor.textHint),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      )
+                    ],
+                  ),
+                ),
+                Expanded(child: Container()),
+                Container(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        time,
+                        style: TextStyle(fontSize: 13, color: AppColor.textHint),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      Icon(
+                        Icons.notifications_none_outlined,
+                        size: 16,
+                        color: AppColor.textHint,
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Container(
+            height: 1,
+            margin: EdgeInsets.only(left: 85),
+            color: AppColor.dividerGray,
+          )
+        ],
+      ),
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => (AppWebView(httpurl, LoadUrlType.URL)),
+          ),
+        );
+      },
     );
   }
 

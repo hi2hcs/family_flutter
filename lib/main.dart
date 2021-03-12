@@ -1,3 +1,4 @@
+import 'package:family/color/app_color.dart';
 import 'package:family/main_page.dart';
 import 'package:flutter/material.dart';
 
@@ -16,6 +17,7 @@ class HomePageState extends State<MyApp> {
     return MaterialApp(
         theme: ThemeData(
           primarySwatch: Colors.blue,
+          primaryColor: AppColor.primeColor,
           scaffoldBackgroundColor: Colors.white,
           visualDensity: VisualDensity.adaptivePlatformDensity,
           highlightColor: Colors.transparent,

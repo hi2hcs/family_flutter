@@ -35,7 +35,8 @@ class HorizontalContentWidgetState extends State<HorizontalContentWidget> {
           },
           splashColor: AppColor.dividerGray,
           child: Container(
-            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            height: 55,
+            padding: EdgeInsets.symmetric(horizontal: 15),
             child: Row(
               children: [
                 widget.icon ?? Container(),
